@@ -63,6 +63,13 @@
     "_comment": "颜色字段可以直接写 CSS linear-gradient，圆环会画成渐变；文字取渐变中间那档纯色。"
   },
   {
+    "id": "grok",
+    "label": "Grok",
+    "color": "#6C5CE7",
+    "icon": "icons/grok.png",
+    "adapter": "manual"
+  },
+  {
     "id": "workbuddy",
     "label": "WorkBuddy",
     "color": "#0F766E",

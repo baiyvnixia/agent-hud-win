@@ -5,6 +5,8 @@
 
 Windows 10 / 11 · 纯 PowerShell + WPF · 不需要安装任何运行时（数据源需要 Node 18+）
 
+**中文** · [English](README.en.md)
+
 ![悬停状态](docs/screenshot-hover.png)
 
 ---
@@ -112,6 +114,8 @@ node snapshot.mjs --pretty    # 真拉一次，看返回结构
 | `gemini` | Gemini | `linear-gradient(135deg, #00C6FF 0%, #0066FF 50%, #3A7BD5 100%)` |
 | `workbuddy` | WorkBuddy | `#0F766E` |
 | `qwen` | 千问 | `#F5C542` |
+| `grok` | Grok | `#6C5CE7` |
+| `grok` | Grok | `#6C5CE7` |
 | `minimax` | MiniMax | `#6A0DAD` |
 
 > **颜色由 `providers.json` 的 `color` 字段决定，每个模型固定**。
@@ -217,8 +221,8 @@ snapshot.mjs  ──每60秒──▶  %TEMP%\agent-hud-win.json  ──读取�
 
 - 视觉与交互灵感来自 [jazzenchen/agent-hud-open](https://github.com/jazzenchen/agent-hud-open)
   （macOS 版，Swift）。本仓库是独立的 Windows 实现，不包含其代码
-- 仓库内的图标是**脚本生成的占位图**（品牌色圆 + 首字母），不含任何厂商 logo。
-  各 AI 供应商的名称与商标归其各自所有者所有；如你要换成真实 logo，请自行确认授权
+- 图标只用于标识对应服务：DeepSeek / Kimi / GLM / Claude 用官方图形，Gemini 星形与 Grok 的 X 按品牌形状绘制
+  各名称与图标商标归其各自所有者所有；若要在更严格的条款下再分发，请自行替换或移除 `icons/` 里的文件
 
 ## 许可
 

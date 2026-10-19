@@ -157,7 +157,18 @@ function Get-SolidColor([string]$spec) {
   return $spec
 }
 
-function Get-IconPath([string]$id) {
+function Get-IconPath($provider) {
+  # 优先用 providers.json 声明的 icon（和 color 一样是唯一真源）；
+  # 没声明才回退到 config.json 的 providerIcons 映射。
+  if ($provider -and $provider.id) {
+    if ($provider.icon) {
+      $p2 = Join-Path $script:Root ([string]$provider.icon)
+      if (Test-Path $p2) { return $p2 }
+    }
+    $id = [string]$provider.id
+  } else {
+    $id = [string]$provider
+  }
   $map = CfgOr 'providerIcons' $null
   if (-not $map) { return $null }
   $p = $map.PSObject.Properties[$id]
@@ -431,7 +442,7 @@ function New-Ring($provider) {
   $grid.Width = $size
   $grid.Height = $size
 
-  $iconPath = Get-IconPath $provider.id
+  $iconPath = Get-IconPath $provider
   $iconSize = $size * $script:IconScale
   if ($iconPath) {
     $bmp = Get-IconBitmap $iconPath $iconSize

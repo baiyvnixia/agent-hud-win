@@ -346,6 +346,7 @@ async function collect() {
         todaySpend: todaySpend(def.id),
         reference: def.reference ?? null,
         color: def.color ?? null,
+        icon: def.icon ?? null,
       };
       lastGood.set(def.id, payload);
       return payload;
