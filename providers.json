@@ -2,7 +2,7 @@
   {
     "id": "deepseek",
     "label": "DeepSeek",
-    "color": "#4D6BFE",
+    "color": "#1F6F8B",
     "icon": "icons/deepseek.png",
     "adapter": "deepseek",
     "auth": { "env": ["DEEPSEEK_API_KEY"], "header": "Authorization", "scheme": "Bearer " },
@@ -22,7 +22,7 @@
   {
     "id": "zhipu",
     "label": "智谱 GLM",
-    "color": "#10B5A5",
+    "color": "#33FF66",
     "icon": "icons/zhipu.png",
     "adapter": "zhipu",
     "auth": { "env": ["ZHIPU_API_KEY", "GLM_API_KEY"], "header": "Authorization", "scheme": "Bearer " },
@@ -39,7 +39,53 @@
   },
 
   {
-    "_comment": "下面的例子演示「纯配置接入」：不需要写代码，只要接口是 GET 一个 URL、余额在某个字段里。把 enabled 改成 true 并把 env 换成你自己的环境变量名即可。更多说明见 docs/ADD-PROVIDER.md",
+    "id": "claude",
+    "label": "Claude",
+    "color": "#D97757",
+    "icon": "icons/claude.png",
+    "adapter": "manual",
+    "_comment": "Anthropic 没有公开余额接口。manual = 在 providers.local.json 的 manual.claude 里手填，或改成 generic 指向你自己的中转接口。"
+  },
+  {
+    "id": "gpt",
+    "label": "GPT",
+    "color": "#10A37F",
+    "icon": "icons/gpt.png",
+    "adapter": "manual",
+    "_comment": "OpenAI 的余额接口是 dashboard 私有接口。用 manual，或改成 generic 指向你自己的接口。"
+  },
+  {
+    "id": "gemini",
+    "label": "Gemini",
+    "color": "linear-gradient(135deg, #00C6FF 0%, #0066FF 50%, #3A7BD5 100%)",
+    "icon": "icons/gemini.png",
+    "adapter": "manual",
+    "_comment": "颜色字段可以直接写 CSS linear-gradient，圆环会画成渐变；文字取渐变中间那档纯色。"
+  },
+  {
+    "id": "workbuddy",
+    "label": "WorkBuddy",
+    "color": "#0F766E",
+    "icon": "icons/workbuddy.png",
+    "adapter": "manual"
+  },
+  {
+    "id": "qwen",
+    "label": "千问",
+    "color": "#F5C542",
+    "icon": "icons/qwen.png",
+    "adapter": "manual"
+  },
+  {
+    "id": "minimax",
+    "label": "MiniMax",
+    "color": "#6A0DAD",
+    "icon": "icons/minimax.png",
+    "adapter": "manual"
+  },
+
+  {
+    "_comment": "下面演示「纯配置接入」：接口是 GET 一个 URL、余额在某个字段里，就不需要写代码。enabled 改 true 并配好 env 即可。详见 docs/ADD-PROVIDER.md",
     "id": "example-generic",
     "label": "示例供应商",
     "color": "#22C55E",

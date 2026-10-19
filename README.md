@@ -96,12 +96,29 @@ node snapshot.mjs --pretty    # 真拉一次，看返回结构
 
 已经内置好适配器的：
 
-| id | 供应商 | 需要的环境变量 |
+| id | 供应商 | 着色 | 需要的环境变量 |
+|---|---|---|---|
+| `deepseek` | DeepSeek | `#1F6F8B` | `DEEPSEEK_API_KEY` |
+| `moonshot` | Kimi / Moonshot | `#8B5CF6` | `MOONSHOT_API_KEY` |
+| `zhipu` | 智谱 GLM（现金 + 资源包） | `#33FF66` | `ZHIPU_API_KEY` |
+| `openrouter` | OpenRouter | `#F59E0B` | `OPENROUTER_API_KEY` |
+
+**没有公开余额接口、用 `manual` 方式填数**（数值写在 `providers.local.json` 的 `manual` 段里）：
+
+| id | 供应商 | 着色 |
 |---|---|---|
-| `deepseek` | DeepSeek | `DEEPSEEK_API_KEY` |
-| `moonshot` | Kimi / Moonshot | `MOONSHOT_API_KEY` |
-| `zhipu` | 智谱 GLM（现金 + 资源包） | `ZHIPU_API_KEY` |
-| `openrouter` | OpenRouter | `OPENROUTER_API_KEY` |
+| `claude` | Claude | `#D97757` |
+| `gpt` | GPT | `#10A37F` |
+| `gemini` | Gemini | `linear-gradient(135deg, #00C6FF 0%, #0066FF 50%, #3A7BD5 100%)` |
+| `workbuddy` | WorkBuddy | `#0F766E` |
+| `qwen` | 千问 | `#F5C542` |
+| `minimax` | MiniMax | `#6A0DAD` |
+
+> **颜色由 `providers.json` 的 `color` 字段决定，每个模型固定**。
+> 除了渐变，`color` 也可以直接写 CSS 渐变：`linear-gradient(135deg, #00C6FF 0%, #0066FF 50%, #3A7BD5 100%)`，
+> 圆环就会画成渐变（文字仍取渐变中间那档纯色，保证小字看得清）。
+> 低余额默认**不再改变圆环颜色**（保持品牌色）；想恢复「剩余 ≤35% 变黄、≤15% 变红」的旧行为，
+> 在 `config.json` 里加 `"warnOnLowBalance": true`。
 
 加一个新的（示例）：在 `providers.json` 里加
 
@@ -117,6 +134,10 @@ node snapshot.mjs --pretty    # 真拉一次，看返回结构
 ```
 
 浮窗就多出一行，圆环按 `remain / total` 画。想加几个就加几个。
+
+十个一起长这样：
+
+![所有供应商](docs/screenshot-all-providers.png)
 
 ---
 
@@ -146,7 +167,8 @@ snapshot.mjs  ──每60秒──▶  %TEMP%\agent-hud-win.json  ──读取�
 | `panelRadius` | 14 | 圆角半径 |
 | `cornerScale` | 1.5 | 弯折轨道圆角半径系数，越大内圈越圆 |
 | `snapDistance` | 70 | 离边多近自动吸附 |
-| `warnRatio` / `lowRatio` | 0.35 / 0.15 | 变黄 / 变红的阈值 |
+| `warnOnLowBalance` | false | 低余额是否把圆环改成黄/红（默认关 = 圆环保持品牌色） |
+| `warnRatio` / `lowRatio` | 0.35 / 0.15 | 上面开关打开后，变黄 / 变红的阈值 |
 | `refreshSeconds` | 60 | 刷新间隔 |
 | `allowProcessExact` | … | 前台是这些程序时显示（加你的 IDE / 终端） |
 | `hideWhenOtherFullscreen` | true | 其他应用全屏时隐藏 |

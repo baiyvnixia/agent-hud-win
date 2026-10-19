@@ -129,13 +129,32 @@ function Write-Log([string]$msg) {
   } catch { }
 }
 
-function Get-ProviderColor([string]$id) {
+function Get-ProviderColor($provider) {
+  # 传对象时优先用 providers.json 里声明的 color（唯一真源）；
+  # 传字符串（老调用点）就按 id 去 config.json 的 providerColors 里查。
+  $id = $provider
+  if ($provider -and $provider.id) {
+    $id = [string]$provider.id
+    if ($provider.color) { return [string]$provider.color }
+  } else {
+    $id = [string]$provider
+  }
   $map = CfgOr 'providerColors' $null
   if ($map) {
     $p = $map.PSObject.Properties[$id]
     if ($p -and $p.Value) { return [string]$p.Value }
   }
   return $script:Fallback
+}
+
+# 渐变色（如 Gemini 的 linear-gradient）只用在圆环上；文字和圆点用其中一个纯色，
+# 否则小字渐变会很难看清。规则：取渐变中间那一档。
+function Get-SolidColor([string]$spec) {
+  if ($spec -and $spec -match 'linear-gradient') {
+    $cols = @([regex]::Matches($spec, '#[0-9A-Fa-f]{6}') | ForEach-Object { $_.Value })
+    if ($cols.Count -ge 1) { return $cols[[int][Math]::Floor(($cols.Count - 1) / 2)] }
+  }
+  return $spec
 }
 
 function Get-IconPath([string]$id) {
@@ -300,6 +319,38 @@ function Get-Brush([string]$hex, [double]$opacity = 1.0) {
   return $b
 }
 
+# 供应商颜色可以是纯色（#RRGGBB）或 CSS 渐变：
+#   linear-gradient(135deg, #00C6FF 0%, #0066FF 50%, #3A7BD5 100%)
+# 渐变只用在圆环描边上。CSS 角度约定：0deg = 朝上，顺时针增加。
+function Get-RingBrush([string]$spec, [double]$opacity = 0.95) {
+  if ($spec -and $spec -match 'linear-gradient') {
+    try {
+      $deg = 135.0
+      if ($spec -match 'linear-gradient\(\s*(-?[\d.]+)deg') { $deg = [double]$matches[1] }
+      $stops = [regex]::Matches($spec, '#([0-9A-Fa-f]{6})\s*(?:([\d.]+)%)?')
+      if ($stops.Count -ge 2) {
+        $rad = $deg * [Math]::PI / 180.0
+        $dx = [Math]::Sin($rad)
+        $dy = -[Math]::Cos($rad)
+        $g = New-Object System.Windows.Media.LinearGradientBrush
+        $g.StartPoint = New-Object System.Windows.Point ((0.5 - $dx / 2), (0.5 - $dy / 2))
+        $g.EndPoint = New-Object System.Windows.Point ((0.5 + $dx / 2), (0.5 + $dy / 2))
+        $n = $stops.Count
+        for ($i = 0; $i -lt $n; $i++) {
+          $hex = '#' + $stops[$i].Groups[1].Value
+          $off = if ($stops[$i].Groups[2].Success) { [double]$stops[$i].Groups[2].Value / 100.0 } else { $i / [double]($n - 1) }
+          $col = [System.Windows.Media.ColorConverter]::ConvertFromString($hex)
+          $g.GradientStops.Add((New-Object System.Windows.Media.GradientStop $col, $off))
+        }
+        $g.Opacity = $opacity
+        $g.Freeze()
+        return $g
+      }
+    } catch { }
+  }
+  return (Get-Brush (Get-SolidColor $spec) $opacity)
+}
+
 $script:IconCache = @{}
 
 function Get-IconBitmap([string]$path, [double]$size) {
@@ -340,14 +391,18 @@ function Get-ProviderRatio($p) {
 }
 
 function Get-RingColor($p) {
+  # 只有「查询失败」才改成错误色（这是状态，不是品牌色）。
+  # 低余额变色是可选项：config.json 里 "warnOnLowBalance": true 才会把圆环
+  # 从品牌色改成黄/红——默认关闭，保证每个模型的圆环颜色是固定可控的。
   if (-not $p.ok) { return $script:ErrorColor }
-  if ($p.stale) { return $script:StaleColor }
-  $r = Get-ProviderRatio $p
-  if ($null -ne $r) {
-    if ($r -le $script:LowRatio) { return $script:LowColor }
-    if ($r -le $script:WarnRatio) { return $script:WarnColor }
+  if ($script:WarnOnLow) {
+    $r = Get-ProviderRatio $p
+    if ($null -ne $r) {
+      if ($r -le $script:LowRatio) { return $script:LowColor }
+      if ($r -le $script:WarnRatio) { return $script:WarnColor }
+    }
   }
-  return (Get-ProviderColor $p.id)
+  return (Get-ProviderColor $p)
 }
 
 function Get-RowSummary($p) {
@@ -399,7 +454,7 @@ function New-Ring($provider) {
     $lbl.Text = $txt.Substring(0, 1).ToUpper()
     $lbl.FontSize = $size * 0.42
     $lbl.FontWeight = [System.Windows.FontWeights]::SemiBold
-    $lbl.Foreground = Get-Brush (Get-ProviderColor $provider.id) 1.0
+    $lbl.Foreground = Get-Brush (Get-SolidColor (Get-ProviderColor $provider)) 1.0
     $lbl.HorizontalAlignment = 'Center'
     $lbl.VerticalAlignment = 'Center'
     [void]$grid.Children.Add($lbl)
@@ -419,7 +474,7 @@ function New-Ring($provider) {
 
   $arc = New-Object System.Windows.Shapes.Ellipse
   $arc.Width = $size; $arc.Height = $size
-  $arc.Stroke = Get-Brush $color 0.95
+  $arc.Stroke = Get-RingBrush $color 0.95
   $arc.StrokeThickness = $t
   $da = New-Object System.Windows.Media.DoubleCollection
   [void]$da.Add($dashLen)
@@ -451,7 +506,7 @@ function New-ProviderBlock($p) {
   $head.Orientation = 'Horizontal'
   $dot = New-Object System.Windows.Shapes.Ellipse
   $dot.Width = 7; $dot.Height = 7
-  $dot.Fill = Get-Brush (Get-ProviderColor $p.id) 1.0
+  $dot.Fill = Get-Brush (Get-SolidColor (Get-ProviderColor $p)) 1.0
   $dot.Margin = New-Object System.Windows.Thickness 0, 5, 6, 0
   $dot.VerticalAlignment = 'Top'
   [void]$head.Children.Add($dot)
@@ -1227,7 +1282,7 @@ function Update-Content($snap) {
 
     $lbl = New-Object System.Windows.Controls.TextBlock
     $lbl.Text = (Get-RowSummary $p)
-    $lbl.Foreground = Get-Brush (Get-RingColor $p) 1.0
+    $lbl.Foreground = Get-Brush (Get-SolidColor (Get-RingColor $p)) 1.0
     $lbl.FontWeight = [System.Windows.FontWeights]::SemiBold
     $lbl.Visibility = 'Collapsed'
     [void]$row.Children.Add($lbl)

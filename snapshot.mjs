@@ -213,6 +213,33 @@ const ADAPTERS = {
       kind: 'balance', text: `$${remain.toFixed(2)} / $${total.toFixed(2)}`, expiresAt: null,
     }];
   },
+
+  /**
+   * manual：没有公开余额接口的供应商（Claude / GPT / Gemini / MiniMax ...）。
+   * 数值写在 providers.local.json 的 manual 段，例如：
+   *   "manual": { "claude": { "amount": 18.5, "capacity": 20, "unit": "USD" } }
+   * 配了才显示，没配就静默跳过（不会在界面上显示成错误）。
+   */
+  manual: async (ctx, def) => {
+    const m = (localCfg.manual || {})[def.id];
+    if (!m) throw new Error('manual provider 未在本机配置数值');
+    const amount = num(m.amount);
+    const capacity = num(m.capacity);
+    if (amount == null) throw new Error('manual 配置里缺少 amount');
+    const unit = m.unit || '';
+    return [{
+      label: m.itemLabel || def.label || def.id,
+      amount,
+      unit: unit || null,
+      capacity,
+      ratio: capacity && capacity > 0 ? amount / capacity : (num(m.ratio) ?? null),
+      kind: capacity ? 'quota' : 'balance',
+      text: m.text || (capacity
+        ? `${amount} / ${capacity}${unit ? ' ' + unit : ''}`
+        : `${unit ? unit + ' ' : ''}${amount}`),
+      expiresAt: m.expiresAt || null,
+    }];
+  },
 };
 
 /** 通用适配器：纯配置驱动，适合「GET 一个 URL 取某个字段」的供应商。 */
@@ -299,14 +326,27 @@ async function collect() {
     const key = resolveKey(def.auth?.env);
     // 需要 key 但没配 → 直接跳过，不当作错误（否则界面上全是红点）
     if (def.auth?.env?.length && !key) return null;
+    // manual 类型没在本机填数值 → 也跳过，不要显示成红圈
+    if (def.adapter === 'manual' && !(localCfg.manual || {})[def.id]) return null;
 
-    const base = { id: def.id, label: def.label || def.id, ok: false, stale: false, error: null, items: [] };
+    const base = {
+      id: def.id, label: def.label || def.id,
+      color: def.color ?? null,
+      ok: false, stale: false, error: null, items: [],
+    };
     try {
       const ctx = buildCtx(key?.value, def);
       const fn = def.adapter ? ADAPTERS[def.adapter] : genericAdapter;
       if (!fn) throw new Error(`未知 adapter: ${def.adapter}`);
       const items = await fn(ctx, def);
-      const payload = { ...base, ok: true, items, todaySpend: todaySpend(def.id), reference: def.reference ?? null };
+      const payload = {
+        ...base,
+        ok: true,
+        items,
+        todaySpend: todaySpend(def.id),
+        reference: def.reference ?? null,
+        color: def.color ?? null,
+      };
       lastGood.set(def.id, payload);
       return payload;
     } catch (e) {
