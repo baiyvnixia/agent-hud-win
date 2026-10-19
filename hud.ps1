@@ -265,16 +265,16 @@ if ($Decide) {
     return [pscustomobject]@{ Handle = [IntPtr]1; Rect = $r; ProcessId = 1; Process = $proc; Class = $cls; Title = '' }
   }
   $cases = @(
-    @{ n = '无前台窗口(桌面)';          fg = $null;                          want = $true  },
-    @{ n = 'DSH Desktop 铺满86%';       fg = (Fake-Fg 'DSH Desktop' 'Chrome_WidgetWin_1' 0.86); want = $true },
-    @{ n = 'ZCode 全屏100%';            fg = (Fake-Fg 'ZCode' 'Chrome_WidgetWin_1' 1.0);   want = $true },
-    @{ n = 'WindowsTerminal 全屏';      fg = (Fake-Fg 'WindowsTerminal' 'CASCADIA_HOSTING_WINDOW_CLASS' 1.0); want = $true },
-    @{ n = 'MiniMax(子串匹配)全屏';     fg = (Fake-Fg 'MiniMaxHub' 'Chrome_WidgetWin_1' 1.0); want = $true },
-    @{ n = 'explorer/Progman(桌面)';    fg = (Fake-Fg 'explorer' 'Progman' 1.0);          want = $true },
-    @{ n = '浏览器窗口化55%';           fg = (Fake-Fg 'chrome' 'Chrome_WidgetWin_1' 0.55); want = $true },
-    @{ n = '浏览器几乎全屏97%';         fg = (Fake-Fg 'chrome' 'Chrome_WidgetWin_1' 0.97); want = $false },
-    @{ n = 'Word 全屏100%';             fg = (Fake-Fg 'WINWORD' 'OpusApp' 1.0);           want = $false },
-    @{ n = '微信全屏100%';              fg = (Fake-Fg 'Weixin' 'Qt51514QWindowIcon' 1.0); want = $false }
+    @{ n = 'no foreground (desktop)';    fg = $null;                          want = $true  },
+    @{ n = 'VS Code fullscreen (in allowProcessExact)'; fg = (Fake-Fg 'Code' 'Chrome_WidgetWin_1' 1.0); want = $true },
+    @{ n = 'Cursor 86% covered';         fg = (Fake-Fg 'Cursor' 'Chrome_WidgetWin_1' 0.86); want = $true },
+    @{ n = 'WindowsTerminal fullscreen'; fg = (Fake-Fg 'WindowsTerminal' 'CASCADIA_HOSTING_WINDOW_CLASS' 1.0); want = $true },
+    @{ n = 'substring match (vibearound)'; fg = (Fake-Fg 'VibeAroundHub' 'Chrome_WidgetWin_1' 1.0); want = $true },
+    @{ n = 'explorer / Progman (desktop)'; fg = (Fake-Fg 'explorer' 'Progman' 1.0);        want = $true },
+    @{ n = 'browser windowed 55%';       fg = (Fake-Fg 'chrome' 'Chrome_WidgetWin_1' 0.55); want = $true },
+    @{ n = 'browser nearly fullscreen 97%'; fg = (Fake-Fg 'chrome' 'Chrome_WidgetWin_1' 0.97); want = $false },
+    @{ n = 'Word fullscreen 100%';       fg = (Fake-Fg 'WINWORD' 'OpusApp' 1.0);           want = $false },
+    @{ n = 'WeChat fullscreen 100%';     fg = (Fake-Fg 'Weixin' 'Qt51514QWindowIcon' 1.0); want = $false }
   )
   $fail = 0
   foreach ($c in $cases) {
