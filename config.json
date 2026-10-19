@@ -1,0 +1,71 @@
+{
+  "_comment": "agent-hud-win 配置。circleSize 单位是 DIP（WPF 设备无关像素），物理像素 = circleSize × 系统 DPI 缩放。外观照着「深色圆角底 + 图标外套进度弧」的简约形态。改完重启浮窗生效。",
+  "circleSize": 32,
+  "ringThickness": 2.8,
+  "gap": 10,
+  "iconScale": 0.60,
+  "panelPadding": 8,
+  "panelBackground": "#F0101218",
+  "panelBorder": "#2EFFFFFF",
+  "panelRadius": 14,
+  "cornerScale": 1.5,
+  "edgeMargin": 4,
+  "snapDistance": 70,
+  "hoverExpand": true,
+
+  "_referenceBalance_comment": "现金余额没有厂商给的上限，圆环也就没有天然的百分比。providers.json 里每个 provider 可以写自己的 reference（推荐）；这里是对应的兜底表。设成 null 则该行只显示数值、圆环画满。资源包/额度型（有真实总量）不受影响。",
+  "referenceBalance": {},
+
+  "_show_comment": "显隐规则：前台是下列程序时显示，其他应用全屏（覆盖率 >= fullscreenCoverage）时隐藏。加你自己的 IDE / 终端 / AI 客户端即可。",
+  "refreshSeconds": 60,
+  "foregroundPollMs": 400,
+  "hideWhenOtherFullscreen": true,
+  "fullscreenCoverage": 0.92,
+  "allowProcessExact": [
+    "windowsterminal", "windowsterminalpreview", "openconsole", "conhost", "cmd",
+    "powershell", "pwsh", "pwsh-preview", "wezterm", "alacritty", "mintty", "tabby", "hyper",
+    "git-bash", "bash", "ubuntu", "wsl",
+    "code", "code-insiders", "cursor", "windsurf", "trae", "qoder", "devenv", "zed",
+    "idea64", "pycharm64", "goland64", "webstorm64", "clion64", "rider64", "sublime_text",
+    "claude", "codex", "opencode", "gemini", "chatgpt"
+  ],
+  "allowProcessContains": ["vibearound", "agent", "terminal"],
+  "allowTitleContains": [],
+  "desktopClassNames": [
+    "progman", "workerw", "shelldll_defview", "shell_traywnd",
+    "xamlexplorerhostislandwindow", "multitaskingviewframe",
+    "windows.ui.core.corewindow", "tasklistthumbshadow"
+  ],
+
+  "providerIcons": {
+    "deepseek": "icons/deepseek.png",
+    "moonshot": "icons/moonshot.png",
+    "zhipu": "icons/zhipu.png",
+    "openrouter": "icons/openrouter.png",
+    "example-generic": "icons/example-generic.png"
+  },
+  "providerColors": {
+    "deepseek": "#4D6BFE",
+    "moonshot": "#8B5CF6",
+    "zhipu": "#10B5A5",
+    "openrouter": "#F59E0B",
+    "example-generic": "#22C55E"
+  },
+  "accentFallback": "#7A8699",
+
+  "warnRatio": 0.35,
+  "lowRatio": 0.15,
+  "warnColor": "#F0B429",
+  "lowColor": "#EF4444",
+  "errorColor": "#EF4444",
+  "staleColor": "#F0B429",
+  "trackColor": "#40FFFFFF",
+
+  "detailWidth": 300,
+  "detailBackground": "#F81A1D26",
+  "detailPadding": 10,
+
+  "_panelUrl_comment": "可选：点明细框想打开的本地面板地址（比如你自己的控制台）。留空则不执行。",
+  "panelUrl": "",
+  "logFile": "hud.log"
+}

@@ -1,0 +1,18 @@
+# 统一换行，避免 Windows / macOS 协作时整文件 diff
+* text=auto
+
+# Windows 脚本用 CRLF（PowerShell 5.1 对 LF 的 .ps1 也能跑，但 CRLF 更保险）
+*.ps1   text eol=crlf
+*.vbs   text eol=crlf
+*.cmd   text eol=crlf
+
+# 跨平台脚本用 LF
+*.mjs   text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+.gitignore text eol=lf
+
+# 二进制
+*.png   binary
+*.ico   binary
+*.exe   binary

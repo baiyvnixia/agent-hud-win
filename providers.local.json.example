@@ -1,0 +1,30 @@
+{
+  "_comment": "本文件用于放你本机的私密配置，已在 .gitignore 里排除，不会被提交。把 providers.local.json.example 复制成 providers.local.json 再改。",
+
+  "keys": {
+    "DEEPSEEK_API_KEY": "sk-在这里填你自己的",
+    "MOONSHOT_API_KEY": "sk-在这里填你自己的",
+    "ZHIPU_API_KEY": "在这里填你自己的",
+    "OPENROUTER_API_KEY": "sk-or-在这里填你自己的",
+    "EXAMPLE_API_KEY": "填你自己的"
+  },
+
+  "_providers_comment": "可选：在这里覆盖或新增 provider（同 id 会合并覆盖 providers.json 里的定义），不用改公共文件。",
+  "providers": [
+    {
+      "id": "my-own-llm",
+      "label": "我的自建模型",
+      "color": "#22C55E",
+      "icon": "icons/example-generic.png",
+      "auth": { "env": ["MY_LLM_KEY"], "header": "Authorization", "scheme": "Bearer " },
+      "request": { "url": "https://my-llm.example.com/api/balance" },
+      "response": {
+        "listPath": "data",
+        "amountPath": "remain",
+        "capacityPath": "total",
+        "labelPath": "name"
+      },
+      "reference": 10
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+[
+  {
+    "id": "deepseek",
+    "label": "DeepSeek",
+    "color": "#4D6BFE",
+    "icon": "icons/deepseek.png",
+    "adapter": "deepseek",
+    "auth": { "env": ["DEEPSEEK_API_KEY"], "header": "Authorization", "scheme": "Bearer " },
+    "request": { "url": "https://api.deepseek.com/user/balance" },
+    "reference": 20
+  },
+  {
+    "id": "moonshot",
+    "label": "Kimi",
+    "color": "#8B5CF6",
+    "icon": "icons/moonshot.png",
+    "adapter": "moonshot",
+    "auth": { "env": ["MOONSHOT_API_KEY", "KIMI_API_KEY"], "header": "Authorization", "scheme": "Bearer " },
+    "request": { "url": "https://api.moonshot.cn/v1/users/me/balance" },
+    "reference": 20
+  },
+  {
+    "id": "zhipu",
+    "label": "智谱 GLM",
+    "color": "#10B5A5",
+    "icon": "icons/zhipu.png",
+    "adapter": "zhipu",
+    "auth": { "env": ["ZHIPU_API_KEY", "GLM_API_KEY"], "header": "Authorization", "scheme": "Bearer " },
+    "request": { "url": "https://open.bigmodel.cn" }
+  },
+  {
+    "id": "openrouter",
+    "label": "OpenRouter",
+    "color": "#F59E0B",
+    "icon": "icons/openrouter.png",
+    "adapter": "openrouter",
+    "auth": { "env": ["OPENROUTER_API_KEY"], "header": "Authorization", "scheme": "Bearer " },
+    "request": { "url": "https://openrouter.ai/api/v1/credits" }
+  },
+
+  {
+    "_comment": "下面的例子演示「纯配置接入」：不需要写代码，只要接口是 GET 一个 URL、余额在某个字段里。把 enabled 改成 true 并把 env 换成你自己的环境变量名即可。更多说明见 docs/ADD-PROVIDER.md",
+    "id": "example-generic",
+    "label": "示例供应商",
+    "color": "#22C55E",
+    "icon": "icons/example-generic.png",
+    "enabled": false,
+    "auth": { "env": ["EXAMPLE_API_KEY"], "header": "Authorization", "scheme": "Bearer " },
+    "request": {
+      "url": "https://api.example.com/v1/account/balance",
+      "headers": { "X-Extra-Header": "value" }
+    },
+    "response": {
+      "listPath": "data.balances",
+      "amountPath": "available",
+      "capacityPath": "total",
+      "unitPath": "unit",
+      "labelPath": "name",
+      "expiresPath": "expire_at"
+    },
+    "reference": 10
+  }
+]

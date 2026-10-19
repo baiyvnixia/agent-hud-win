@@ -1,0 +1,26 @@
+# ---- 运行时产物（浮窗自己生成，不该进仓库）----
+hud.log
+hud.log.*
+state.json
+hud.pid
+heartbeat.txt
+running.lock
+watchdog.lock
+watchdog.stop
+toggle.cmd
+hint-shown.marker
+*.tmp
+
+# ---- 本机私密配置：你的 API key 就写在这里，永远不要提交 ----
+providers.local.json
+.env
+.env.*
+secrets.json
+
+# ---- 其他 ----
+node_modules/
+*.bak
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
